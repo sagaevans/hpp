@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator HPP Sederhana</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 30px;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      max-width: 450px;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+    select, input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    .result {
+      margin-top: 20px;
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Kalkulator HPP</h2>
+
+  <label>Kategori</label>
+  <select id="kategori" onchange="updateProduk()">
+    <option value="">-- Pilih --</option>
+    <option value="makanan">Makanan</option>
+    <option value="minuman">Minuman</option>
+  </select>
+
+  <label>Produk</label>
+  <select id="produk"></select>
+
+  <label>Total Biaya Bahan (Rp)</label>
+  <input type="number" id="bahan" placeholder="contoh: 1000000">
+
+  <label>Jumlah Produksi (pcs)</label>
+  <input type="number" id="qty" placeholder="contoh: 500">
+
+  <button style="margin-top:15px;width:100%;" onclick="hitung()">Hitung</button>
+
+  <div class="result" id="output"></div>
+</div>
+
+<script>
+  const dataProduk = {
+    makanan: {
+      "Roti": { tkl: 0.12, foh: 0.10, waste: 0.03, margin: 0.20 },
+      "Ote-ote": { tkl: 0.10, foh: 0.08, waste: 0.03, margin: 0.18 },
+      "Ayam Geprek": { tkl: 0.15, foh: 0.10, waste: 0.05, margin: 0.25 }
+    },
+    minuman: {
+      "Teh": { tkl: 0.08, foh: 0.07, waste: 0.02, margin: 0.20 },
+      "Kopi": { tkl: 0.10, foh: 0.08, waste: 0.02, margin: 0.25 },
+      "Susu": { tkl: 0.12, foh: 0.10, waste: 0.03, margin: 0.22 }
+    }
+  };
+
+  function updateProduk() {
+    const kategori = document.getElementById("kategori").value;
+    const produkSelect = document.getElementById("produk");
+    produkSelect.innerHTML = "";
+
+    if (!kategori) return;
+
+    Object.keys(dataProduk[kategori]).forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p;
+      opt.textContent = p;
+      produkSelect.appendChild(opt);
+    });
+  }
+
+  function hitung() {
+    const kategori = document.getElementById("kategori").value;
+    const produk = document.getElementById("produk").value;
+    const bahan = parseFloat(document.getElementById("bahan").value);
+    const qty = parseInt(document.getElementById("qty").value);
+
+    if (!kategori || !produk || !bahan || !qty) {
+      alert("Lengkapi semua input");
+      return;
+    }
+
+    const p = dataProduk[kategori][produk];
+
+    const biayaTKL = bahan * p.tkl;
+    const biayaFOH = bahan * p.foh;
+    const biayaWaste = bahan * p.waste;
+
+    const totalHPP = bahan + biayaTKL + biayaFOH + biayaWaste;
+    const hppPerPcs = totalHPP / qty;
+
+    const hargaJual = hppPerPcs / (1 - p.margin);
+
+    document.getElementById("output").innerHTML = `
+      <b>Produk:</b> ${produk}<br><br>
+      Total HPP: Rp ${totalHPP.toLocaleString()}<br>
+      HPP / pcs: Rp ${hppPerPcs.toFixed(0)}<br><br>
+      <b>Harga Jual Wajar:</b><br>
+      Rp ${hargaJual.toFixed(0)} / pcs<br>
+      Margin ± ${(p.margin * 100)}%
+    `;
+  }
+</script>
+
+</body>
+</html>
