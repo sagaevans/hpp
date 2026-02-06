@@ -2,150 +2,47 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Kalkulator HPP - Planning</title>
+  <title>Kalkulator Produksi UMKM</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f4f6f8;
-      padding: 30px;
+      padding: 40px;
+      text-align: center;
     }
     .box {
       background: #fff;
-      padding: 20px;
-      max-width: 600px;
+      padding: 30px;
+      max-width: 400px;
       margin: auto;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    label {
-      font-weight: bold;
-      margin-top: 10px;
+    h2 {
+      margin-bottom: 20px;
+    }
+    a {
       display: block;
+      margin-top: 15px;
+      padding: 12px;
+      background: #1976d2;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
     }
-    input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-    button {
-      margin-top: 10px;
-      padding: 8px;
-      width: 100%;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
-    th, td {
-      padding: 8px;
-      text-align: left;
-    }
-    .result {
-      background: #e8f5e9;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 6px;
+    a:hover {
+      background: #0d47a1;
     }
   </style>
 </head>
 <body>
 
 <div class="box">
-  <h2>Kalkulator HPP (Planning)</h2>
+  <h2>Kalkulator Produksi</h2>
 
-  <label>Nama Produk</label>
-  <input type="text" id="produk" placeholder="Contoh: Roti Manis">
-
-  <label>Jumlah Produksi (pcs)</label>
-  <input type="number" id="qty" placeholder="Contoh: 500">
-
-  <h3>Bahan Baku</h3>
-  <table id="bahanTable">
-    <tr>
-      <th>Nama Bahan</th>
-      <th>Harga (Rp)</th>
-      <th>Aksi</th>
-    </tr>
-  </table>
-
-  <button onclick="tambahBahan()">+ Tambah Bahan</button>
-  <button onclick="hitung()">Hitung HPP</button>
-
-  <div class="result" id="output"></div>
+  <a href="hpp.html">📊 Hitung HPP (Costing)</a>
+  <a href="rab.html">🧾 Hitung RAB (Planning)</a>
 </div>
-
-<script>
-/* === PARAMETER AKUNTANSI (BISA DIUBAH) === */
-const RASIO_TKL = 0.12;
-const RASIO_FOH = 0.10;
-const RASIO_WASTE = 0.03;
-const TARGET_MARGIN = 0.20;
-
-function tambahBahan() {
-  const table = document.getElementById("bahanTable");
-  const row = table.insertRow();
-  row.innerHTML = `
-    <td><input type="text" placeholder="Nama bahan"></td>
-    <td><input type="number" value="0"></td>
-    <td><button onclick="hapusBahan(this)">Hapus</button></td>
-  `;
-}
-
-function hapusBahan(btn) {
-  btn.closest("tr").remove();
-}
-
-function hitung() {
-  const produk = document.getElementById("produk").value;
-  const qty = parseInt(document.getElementById("qty").value);
-
-  if (!produk || !qty) {
-    alert("Lengkapi nama produk dan jumlah produksi");
-    return;
-  }
-
-  let totalBahan = 0;
-  const rows = document.querySelectorAll("#bahanTable tr");
-
-  rows.forEach((row, index) => {
-    if (index === 0) return;
-    const harga = parseFloat(row.cells[1].querySelector("input").value) || 0;
-    totalBahan += harga;
-  });
-
-  const biayaTKL = totalBahan * RASIO_TKL;
-  const biayaFOH = totalBahan * RASIO_FOH;
-  const biayaWaste = totalBahan * RASIO_WASTE;
-
-  const totalHPP = totalBahan + biayaTKL + biayaFOH + biayaWaste;
-  const hppPerPcs = totalHPP / qty;
-  const hargaJual = hppPerPcs / (1 - TARGET_MARGIN);
-
-  document.getElementById("output").innerHTML = `
-    <h3>Laporan Biaya Produksi</h3>
-    <b>Produk:</b> ${produk}<br>
-    <b>Jumlah Produksi:</b> ${qty} pcs<br><br>
-
-    <table>
-      <tr><th>Keterangan</th><th>Jumlah (Rp)</th></tr>
-      <tr><td>Biaya Bahan Baku</td><td>${totalBahan.toLocaleString()}</td></tr>
-      <tr><td>Biaya Tenaga Kerja Langsung</td><td>${biayaTKL.toLocaleString()}</td></tr>
-      <tr><td>Factory Overhead</td><td>${biayaFOH.toLocaleString()}</td></tr>
-      <tr><td>Waste / Penyusutan</td><td>${biayaWaste.toLocaleString()}</td></tr>
-      <tr><th>Total HPP</th><th>${totalHPP.toLocaleString()}</th></tr>
-    </table>
-
-    <br>
-    <b>HPP / pcs:</b> Rp ${hppPerPcs.toFixed(0)}<br>
-    <b>Harga Jual Wajar:</b> Rp ${hargaJual.toFixed(0)} / pcs<br>
-    <b>Target Margin:</b> ${(TARGET_MARGIN * 100)}%
-  `;
-}
-</script>
 
 </body>
 </html>
