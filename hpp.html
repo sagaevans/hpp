@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Hitung HPP</title>
+  <style>
+    body { font-family: Arial; background:#f4f6f8; padding:30px; }
+    .box { background:#fff; padding:20px; max-width:700px; margin:auto;
+           border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1);}
+    label { font-weight:bold; margin-top:10px; display:block; }
+    input { width:100%; padding:8px; margin-top:5px; }
+    button { margin-top:12px; padding:10px; width:100%; }
+    table { width:100%; border-collapse:collapse; margin-top:15px; }
+    th,td { border:1px solid #ccc; padding:8px; }
+    .result { background:#e8f5e9; padding:15px; margin-top:20px; border-radius:6px; }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <a href="index.html">⬅️ Kembali ke Menu</a>
+  <h2>Hitung HPP</h2>
+
+  <label>Jumlah Produksi (pcs)</label>
+  <input type="number" id="qty">
+
+  <h3>Bahan Baku</h3>
+  <table id="bahanTable">
+    <tr><th>Nama</th><th>Biaya (Rp)</th><th></th></tr>
+  </table>
+  <button onclick="tambahBahan()">+ Tambah Bahan</button>
+
+  <label>Biaya Tenaga Kerja Langsung</label>
+  <input type="number" id="tkl">
+
+  <label>Biaya Lain-lain (Gas, Listrik, dll)</label>
+  <input type="number" id="lain">
+
+  <button onclick="hitungHPP()">Hitung</button>
+
+  <div class="result" id="output"></div>
+</div>
+
+<script>
+const RASIO_WASTE = 0.03;
+const TARGET_MARGIN = 0.20;
+
+function tambahBahan() {
+  const t = document.getElementById("bahanTable");
+  const r = t.insertRow();
+  r.innerHTML = `
+    <td><input></td>
+    <td><input type="number" value="0"></td>
+    <td><button onclick="this.closest('tr').remove()">Hapus</button></td>`;
+}
+
+function hitungHPP() {
+  const qty = Number(document.getElementById("qty").value);
+  const tkl = Number(document.getElementById("tkl").value || 0);
+  const lain = Number(document.getElementById("lain").value || 0);
+
+  if (qty <= 0) {
+    alert("Jumlah produksi harus diisi");
+    return;
+  }
+
+  let bahan = 0;
+  document.querySelectorAll("#bahanTable tr").forEach((r,i)=>{
+    if(i===0) return;
+    bahan += Number(r.cells[1].children[0].value || 0);
+  });
+
+  const waste = bahan * RASIO_WASTE;
+  const totalHPP = bahan + tkl + lain + waste;
+  const hppPcs = totalHPP / qty;
+  const hargaJual = hppPcs / (1 - TARGET_MARGIN);
+
+  document.getElementById("output").innerHTML = `
+    <b>Total HPP:</b> Rp ${totalHPP.toLocaleString()}<br>
+    <b>HPP / pcs:</b> Rp ${hppPcs.toFixed(0)}<br>
+    <b>Harga Jual Wajar:</b> Rp ${hargaJual.toFixed(0)}<br>
+    <b>Target Margin:</b> 20%
+  `;
+}
+</script>
+
+</body>
+</html>
