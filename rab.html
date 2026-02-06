@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Hitung RAB</title>
+  <style>
+    body { font-family: Arial; background:#f4f6f8; padding:30px; }
+    .box { background:#fff; padding:20px; max-width:500px; margin:auto;
+           border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1);}
+    label { font-weight:bold; margin-top:10px; display:block; }
+    input { width:100%; padding:8px; margin-top:5px; }
+    button { margin-top:12px; padding:10px; width:100%; }
+    table { width:100%; border-collapse:collapse; margin-top:15px; }
+    th,td { border:1px solid #ccc; padding:8px; }
+    .green { color:green; font-weight:bold; }
+    .red { color:red; font-weight:bold; }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <a href="index.html">⬅️ Kembali ke Menu</a>
+  <h2>Hitung RAB</h2>
+
+  <label>Jumlah Produksi (pcs)</label>
+  <input type="number" id="qty">
+
+  <label>Harga Jual / pcs</label>
+  <input type="number" id="harga">
+
+  <label>Saldo / Modal Produksi</label>
+  <input type="number" id="saldo">
+
+  <button onclick="hitungRAB()">Hitung</button>
+
+  <div id="output"></div>
+</div>
+
+<script>
+const RASIO_BAHAN = 0.60;
+const RASIO_TKL = 0.25;
+const RASIO_LAIN = 0.12;
+const RASIO_WASTE = 0.03;
+
+function hitungRAB() {
+  const qty = Number(qtyEl().value);
+  const harga = Number(hargaEl().value);
+  const saldo = Number(saldoEl().value);
+
+  if (qty<=0 || harga<=0 || saldo<=0) {
+    alert("Semua input wajib diisi");
+    return;
+  }
+
+  const totalPenjualan = qty * harga;
+  const laba = totalPenjualan - saldo;
+  const margin = (laba / totalPenjualan) * 100;
+
+  document.getElementById("output").innerHTML = `
+    <table>
+      <tr><th>Komponen</th><th>Anggaran (Rp)</th></tr>
+      <tr><td>Bahan Baku</td><td>${(saldo*RASIO_BAHAN).toLocaleString()}</td></tr>
+      <tr><td>TKL</td><td>${(saldo*RASIO_TKL).toLocaleString()}</td></tr>
+      <tr><td>Gas/Listrik</td><td>${(saldo*RASIO_LAIN).toLocaleString()}</td></tr>
+      <tr><td>Cadangan</td><td>${(saldo*RASIO_WASTE).toLocaleString()}</td></tr>
+      <tr><th>Total Biaya</th><th>${saldo.toLocaleString()}</th></tr>
+    </table>
+    <br>
+    <b>Total Penjualan:</b> Rp ${totalPenjualan.toLocaleString()}<br>
+    <b>Laba:</b> Rp ${laba.toLocaleString()}<br>
+    <b>Margin:</b>
+    <span class="${margin>=0?'green':'red'}">${margin.toFixed(2)}%</span>
+  `;
+}
+
+const qtyEl = ()=>document.getElementById("qty");
+const hargaEl = ()=>document.getElementById("harga");
+const saldoEl = ()=>document.getElementById("saldo");
+</script>
+
+</body>
+</html>
